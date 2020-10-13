@@ -4,4 +4,4 @@ evaluation_with_generator.random_seed = 0
 tpl_score.batch_size=25
 tpl_score.num_traversals=50
 tpl_score.num_samples_per_dim=25
-tpl_score.active_thresh==0.01
+tpl_score.active_thresh=0.01
