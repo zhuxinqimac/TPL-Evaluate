@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 22:18:35 AEDT
+# --- Last Modified: Tue 13 Oct 2020 22:20:53 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -27,6 +27,7 @@ sys.path.insert(
     0,
     os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                  'stylegan2'))
+import dnnlib
 from absl import logging
 from disentanglement_lib.evaluation.metrics import utils
 import numpy as np
@@ -76,6 +77,7 @@ def compute_tpl_score(ground_truth_data,
   """
     del ground_truth_data
     del artifact_dir
+    dnnlib.tflib.init_tf()
     distance_measure = load_pkl(
         '.stylegan2-cache/vgg16_zhang_perceptual.pkl'
         # 'http://d36zk2xti64re0.cloudfront.net/stylegan1/networks/metrics/vgg16_zhang_perceptual.pkl'
