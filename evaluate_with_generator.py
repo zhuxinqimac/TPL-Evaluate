@@ -8,7 +8,7 @@
 
 # --- File Name: evaluate_with_generator.py
 # --- Creation Date: 12-10-2020
-# --- Last Modified: Tue 13 Oct 2020 19:02:50 AEDT
+# --- Last Modified: Tue 13 Oct 2020 22:25:19 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Evaluation protocol (generator version) to compute metrics."""
@@ -108,7 +108,7 @@ def evaluate_with_generator(model_dir,
     dataset = named_data.get_named_ground_truth_data()
 
     activation_str = gin_dict["reconstruction_loss.activation"]
-    latent_size = gin_dict["encoder.num_latent"]
+    latent_size = int(gin_dict["encoder.num_latent"])
 
     module_path = os.path.join(model_dir, "tfhub")
     with hub.eval_function_for_module(module_path) as f:
