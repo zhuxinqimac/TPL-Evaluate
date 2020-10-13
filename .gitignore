@@ -1,0 +1,7 @@
+.*.swp
+.*.swo
+.*.swn
+*.sh
+*.pyc
+*.pkl
+local_config.txt
