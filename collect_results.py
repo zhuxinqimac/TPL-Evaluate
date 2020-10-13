@@ -8,7 +8,7 @@
 
 # --- File Name: collect_results.py
 # --- Creation Date: 08-09-2020
-# --- Last Modified: Tue 13 Oct 2020 23:05:05 AEDT
+# --- Last Modified: Tue 13 Oct 2020 23:36:17 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -55,6 +55,10 @@ METRICS_TEMPLATE = {
         "gaussian_wasserstein_correlation": None,
         "gaussian_wasserstein_correlation_norm": None,
         "mutual_info_score": None
+    },
+    'tpl': {
+        "avg_tpl": None,
+        "n_active_dims": None
     }
 }
 
@@ -97,15 +101,25 @@ def get_moments(res_dict, template):
     return res_dict_moments
 
 
-def get_metric_result(subdir, metric, representation):
-    result_json = os.path.join(subdir, 'metrics', representation, metric,
-                               'results/json/evaluation_results.json')
+def get_json(result_json):
     if os.path.exists(result_json):
         with open(result_json, 'r') as f:
             data = json.load(f)
         return data
     else:
         return None
+
+
+def get_metric_result(subdir, metric, representation):
+    result_json = os.path.join(subdir, 'metrics', representation, metric,
+                               'results/json/evaluation_results.json')
+    return get_json(result_json)
+
+
+def get_tpl_result(subdir):
+    result_json = os.path.join(
+        subdir, 'metrics/tpl/results/json/evaluation_results.json')
+    return get_json(result_json)
 
 
 def main():
@@ -123,7 +137,7 @@ def main():
                             'downstream_task_boosted_trees',
                             'factor_vae_metric', 'mig',
                             'modularity_explicitness', 'sap_score',
-                            'unsupervised'
+                            'unsupervised', 'tpl'
                         ])
     parser.add_argument('--representation',
                         help='Representation used.',
@@ -143,26 +157,25 @@ def main():
         if not os.path.isdir(sub_path):
             continue
         parse_subdir = subdir.split('-')
-        if len(parse_subdir) >= 7:
-            hyps = '-'.join(parse_subdir[1:5] + parse_subdir[6:])
-            seed = parse_subdir[5]
-        else:
-            hyps = '-'.join(parse_subdir[1:-1])
-            seed = parse_subdir[-1]
+        hyps = '-'.join(parse_subdir)
+        seed = '0'
         if hyps not in res_dict:
-            res_dict[hyps] = [None] * 10
+            res_dict[hyps] = [None] * 1
         # get result for this seed, a dictionary.
-        res_dict[hyps][int(seed)] = get_metric_result(sub_path, args.metric,
-                                                      args.representation)
+        if args.metric == 'tpl':
+            res_dict[hyps][int(seed)] = get_tpl_result(sub_path)
+        else:
+            res_dict[hyps][int(seed)] = get_metric_result(
+                sub_path, args.metric, args.representation)
     # {'0_0_0_0': {'eval.mean': 0.75, 'eval.std': 0.05, 'n_samples': 2}, ...}
     res_dict = get_moments(res_dict, key_template)
     col_heads = ['_config'] + list(res_dict[list(res_dict.keys())[0]].keys())
     col_dicts = {k: [] for k in col_heads}
     for k, v in res_dict.items():
         col_dicts['_config'].append(k)
-        for k in col_dicts.keys():
-            if k != '_config':
-                col_dicts[k].append(v[k])
+        for j in col_dicts.keys():
+            if j != '_config':
+                col_dicts[j].append(v[j])
     new_results = OrderedDict(sorted(col_dicts.items()))
     results_df = pd.DataFrame(new_results)
     print('results_df:', results_df)
