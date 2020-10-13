@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 22:22:38 AEDT
+# --- Last Modified: Tue 13 Oct 2020 22:56:50 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -109,12 +109,13 @@ def compute_tpl_score(ground_truth_data,
     n_active_dims = active_mask.astype(int).sum()
 
     scores_dict = {}
-    scores_dict['avg_tpl_dim'] = avg_tpl_dim
+    scores_dict['avg_tpl_dim'] = avg_tpl_dim.tolist()
     scores_dict['avg_tpl'] = avg_tpl
-    scores_dict['active_mask'] = active_mask
-    scores_dict['active_distances'] = active_distances
-    scores_dict['active_stds'] = active_stds
+    scores_dict['active_mask'] = active_mask.tolist()
+    scores_dict['active_distances'] = active_distances.tolist()
+    scores_dict['active_stds'] = active_stds.tolist()
     scores_dict['n_active_dims'] = n_active_dims
+    print('scores_dict:', scores_dict)
     return scores_dict
 
 
