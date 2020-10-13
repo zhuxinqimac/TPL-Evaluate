@@ -8,7 +8,7 @@
 
 # --- File Name: collect_results.py
 # --- Creation Date: 08-09-2020
-# --- Last Modified: Wed 07 Oct 2020 15:37:38 AEDT
+# --- Last Modified: Tue 13 Oct 2020 23:05:05 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -144,7 +144,7 @@ def main():
             continue
         parse_subdir = subdir.split('-')
         if len(parse_subdir) >= 7:
-            hyps = '-'.join(parse_subdir[1:5]+parse_subdir[6:])
+            hyps = '-'.join(parse_subdir[1:5] + parse_subdir[6:])
             seed = parse_subdir[5]
         else:
             hyps = '-'.join(parse_subdir[1:-1])

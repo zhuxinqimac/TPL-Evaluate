@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 22:56:50 AEDT
+# --- Last Modified: Tue 13 Oct 2020 23:04:54 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -115,7 +115,7 @@ def compute_tpl_score(ground_truth_data,
     scores_dict['active_distances'] = active_distances.tolist()
     scores_dict['active_stds'] = active_stds.tolist()
     scores_dict['n_active_dims'] = n_active_dims
-    print('scores_dict:', scores_dict)
+    # print('scores_dict:', scores_dict)
     return scores_dict
 
 
