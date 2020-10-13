@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 18:58:43 AEDT
+# --- Last Modified: Tue 13 Oct 2020 22:18:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -23,6 +23,10 @@ sys.path.insert(
     0,
     os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
                  'disentanglement_lib'))
+sys.path.insert(
+    0,
+    os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+                 'stylegan2'))
 from absl import logging
 from disentanglement_lib.evaluation.metrics import utils
 import numpy as np
