@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 18:39:04 AEDT
+# --- Last Modified: Tue 13 Oct 2020 18:58:43 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -33,7 +33,7 @@ import gin.tf
 
 @gin.configurable("tpl_score",
                   blacklist=[
-                      "ground_truth_data", "representation_function",
+                      "ground_truth_data", "generator_function",
                       "random_state", "activation_str", "latent_size",
                       "artifact_dir"
                   ])
