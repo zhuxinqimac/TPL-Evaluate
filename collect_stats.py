@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:40:00 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:40:41 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -53,8 +53,8 @@ def spearman_correl(a, b):
 def lasso_correl(a, b):
     lasso = Lasso(max_iter=10000, normalize=True)
     lasso.fit(a[:, np.newaxis], b)
-    print('lasso.coef_:', lasso.coef_)
-    return lasso.coef_
+    # print('lasso.coef_:', lasso.coef_)
+    return lasso.coef_[0]
 
 
 CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
