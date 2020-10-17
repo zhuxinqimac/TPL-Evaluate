@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 18:59:17 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:06:52 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -145,3 +145,6 @@ def main():
         os.path.join(
             args.parent_parent_dir,
             args.correlation_type + '_' + BRIEF[TPL_NAME] + '_vs_others.csv'))
+
+if __name__ == "__main__":
+    main()
