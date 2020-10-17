@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sun 18 Oct 2020 00:33:50 AEDT
+# --- Last Modified: Sun 18 Oct 2020 00:34:36 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -165,8 +165,7 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
         scores_all_i = correl_fn(tpl_all_scores, metric_scores)
         scores_all.append(scores_all_i)
 
-        # ranks_mask = GOOD_THRESH[metric_file_names[i]] < metric_scores
-        ranks_mask = 0.75 < metric_scores
+        ranks_mask = GOOD_THRESH[metric_file_names[i]] < metric_scores
         tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
         # Calculate correlation scores for rank < 20%.
         other_rank_array = np.extract(ranks_mask, metric_scores)
