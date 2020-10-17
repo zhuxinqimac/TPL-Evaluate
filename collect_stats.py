@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 22:59:13 AEDT
+# --- Last Modified: Sat 17 Oct 2020 23:33:26 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -79,16 +79,14 @@ def get_metric_file_names(model_dir):
     return metric_file_names
 
 
-def get_correlation_results(tpl_file, metric_file, correlation_type):
+def get_correlation_results(tpl_file, metric_file, correl_fn):
     tpl_df = pd.read_csv(tpl_file)
     other_df = pd.read_csv(metric_file)
-    print('tpl_df.columns:', tpl_df.columns)
     tpl_array = tpl_df.loc[:, TPL_MEAN].values
     other_array = other_df.loc[:, SUPERVISED_ENTRIES[os.path.basename(
         metric_file)]].values
 
     # Calculate overall correlation scores.
-    correl_fn = CORREL_F[correlation_type]
     correl_score_overall = correl_fn(tpl_array, other_array)
 
     # Calculate per-act-dim correlation scores.
@@ -134,6 +132,39 @@ def save_scores(results, index, columns, args, prefix='overall'):
             '_' + BRIEF[TPL_NAME] + '_vs_others.csv'))
 
 
+def get_tpl_all_scores(model_dirs):
+    tpl_all = None
+    for model_dir in model_dirs:
+        tpl_file = os.path.join(model_dir, TPL_NAME)
+        tpl_df = pd.read_csv(tpl_file)
+        tpl_array = tpl_df.loc[:, TPL_MEAN].values
+        if tpl_all is None:
+            tpl_all = tpl_array
+        else:
+            tpl_all = np.concatenate((tpl_all, tpl_array), axis=0)
+    return tpl_all
+
+
+def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
+    temp = tpl_all_scores.argsort()
+    ranks = np.empty_like(temp)
+    ranks[temp] = np.arange(len(tpl_all_scores))  # rank entries by metric
+    ranks_mask = ranks < (0.2 * len(tpl_all_scores))
+    scores_all = []
+    scores_rank = []
+    for metric_scores in metrics_scores:
+        # Calculate all scores.
+        scores_all_i = correl_fn(tpl_all_scores, metric_scores)
+        scores_all.append(scores_all_i)
+
+        # Calculate correlation scores for rank < 20%.
+        tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
+        other_rank_array = np.extract(ranks_mask, scores_all_i)
+        score_rank_i = correl_fn(tpl_rank_array, other_rank_array)
+        scores_rank.append(score_rank_i)
+    return scores_all, scores_rank
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Collect statistics from TPL and '
@@ -153,19 +184,29 @@ def main():
     metric_file_names = get_metric_file_names(model_dirs[0])
     results_overall_ls = []
     results_rank_ls = []
+    metrics_scores = [None] * len(metric_file_names)
+    correl_fn = CORREL_F[args.correlation_type]
     for model_dir in model_dirs:
         tpl_file = os.path.join(model_dir, TPL_NAME)
         results_overall_ls.append([])
         results_rank_ls.append([])
-        for metric in metric_file_names:
+        for i, metric in enumerate(metric_file_names):
             metric_file = os.path.join(model_dir, metric)
-            col_score, col_scores_for_act_dims, act_dims, correl_score_rank = \
-                get_correlation_results(tpl_file, metric_file, args.correlation_type)
+            col_score, col_scores_for_act_dims, act_dims, correl_score_rank, metric_scores_i = \
+                get_correlation_results(tpl_file, metric_file, correl_fn)
+            if metrics_scores[i] is None:
+                metrics_scores[i] = metric_scores_i
+            else:
+                metrics_scores[i] = np.concatenate(
+                    (metrics_scores[i], metric_scores_i), axis=0)
             results_overall_ls[-1].append(col_score)
             results_rank_ls[-1].append(correl_score_rank)
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
                                      model_dir, BRIEF[metric],
                                      args.correlation_type)
+    tpl_all_scores = get_tpl_all_scores(model_dirs)
+    scores_all, scores_rank = get_all_scores(tpl_all_scores, metrics_scores,
+                                             correl_fn)
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
@@ -175,6 +216,14 @@ def main():
                 model_names, [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='rank')
+    save_scores(np.array(scores_all),
+                'all_models', [BRIEF[name] for name in metric_file_names],
+                args,
+                prefix='all')
+    save_scores(np.array(scores_rank),
+                'all_models', [BRIEF[name] for name in metric_file_names],
+                args,
+                prefix='all_rank')
 
 
 if __name__ == "__main__":
