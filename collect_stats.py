@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 18:47:13 AEDT
+# --- Last Modified: Sat 17 Oct 2020 18:55:37 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -94,11 +94,12 @@ def get_correlation_results(tpl_file, metric_file, correlation_type):
 
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
-                             metric):
+                             metric, correlation_type):
     for i, act_dim in enumerate(act_dims):
         with open(
-                os.path.join(model_dir, metric + '_' + str(act_dim) + '.txt'),
-                'w') as f:
+                os.path.join(
+                    model_dir, correlation_type + '_' + metric + '_' +
+                    str(act_dim) + '.txt'), 'w') as f:
             f.write(col_scores_for_act_dims[i])
 
 
@@ -130,11 +131,13 @@ def main():
                 tpl_file, metric_file, args.correlation_type)
             results_overall_ls[-1].append(col_score)
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
-                                     model_dir, BRIEF[metric])
+                                     model_dir, BRIEF[metric],
+                                     args.correlation_type)
 
     df = pd.DataFrame(np.array(results_overall_ls),
                       index=model_names,
                       columns=[BRIEF[name] for name in metric_file_names])
     df.to_csv(
-        os.path.join(args.parent_parent_dir,
-                     BRIEF[TPL_NAME] + '_vs_others.csv'))
+        os.path.join(
+            args.parent_parent_dir,
+            args.correlation_type + '_' + BRIEF[TPL_NAME] + '_vs_others.csv'))
