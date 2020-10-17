@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:19:29 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:23:46 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -59,12 +59,14 @@ def lasso_correl(a, b):
 CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
 
 
-def get_model_names(model_dirs):
+def get_model_dirs_and_names(model_dirs):
+    model_dirs = []
     model_names = []
     for name in model_dirs:
         if os.path.isdir(name):
+            model_dirs.append(name)
             model_names.append(os.path.basename(name)[:-4])
-    return model_names
+    return model_dirs, model_names
 
 
 def get_metric_file_names(model_dir):
@@ -124,7 +126,7 @@ def main():
                         choices=['Spearman', 'Lasso'])
     args = parser.parse_args()
     model_dirs = glob.glob(os.path.join(args.parent_parent_dir, '*'))
-    model_names = get_model_names(model_dirs)
+    model_dirs, model_names = get_model_dirs_and_names(model_dirs)
     metric_file_names = get_metric_file_names(model_dirs[0])
     results_overall_ls = []
     print('model_dirs:', model_dirs)
