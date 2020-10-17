@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 18:55:37 AEDT
+# --- Last Modified: Sat 17 Oct 2020 18:56:45 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -43,7 +43,6 @@ BRIEF = {
     'collected-factor_vae_metric-mean.csv': 'FVM',
     'collected-beta_vae_sklearn-mean.csv': 'BVM'
 }
-CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
 
 
 def spearman_correl(a, b):
@@ -55,6 +54,9 @@ def lasso_correl(a, b):
     lasso = Lasso(max_iter=10000, normalize=True)
     lasso.fit(a, b)
     return lasso.coef_
+
+
+CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
 
 
 def get_model_names(model_dirs):
