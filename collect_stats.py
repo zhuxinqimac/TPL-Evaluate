@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 22:53:35 AEDT
+# --- Last Modified: Sat 17 Oct 2020 22:54:24 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -109,7 +109,7 @@ def get_correlation_results(tpl_file, metric_file, correlation_type):
     # ranks = np.empty_like(temp)
     # ranks[temp] = np.arange(len(other_array))  # rank entries by metric
     # ranks_mask = ranks < (0.5 * len(other_array))
-    temp = tpl_array.argsort()[::-1]
+    temp = tpl_array.argsort()
     ranks = np.empty_like(temp)
     ranks[temp] = np.arange(len(tpl_array))  # rank entries by metric
     ranks_mask = ranks < (0.5 * len(tpl_array))
