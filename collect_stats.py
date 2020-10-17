@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sun 18 Oct 2020 00:05:16 AEDT
+# --- Last Modified: Sun 18 Oct 2020 00:06:21 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -150,7 +150,7 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
     temp = tpl_all_scores.argsort()
     ranks = np.empty_like(temp)
     ranks[temp] = np.arange(len(tpl_all_scores))  # rank entries by metric
-    ranks_mask = ranks < (0.1 * len(tpl_all_scores))
+    ranks_mask = ranks < (0.05 * len(tpl_all_scores))
     tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
     print('ranks_mask.shape:', ranks_mask.shape)
     scores_all = []
