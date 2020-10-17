@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 23:33:26 AEDT
+# --- Last Modified: Sat 17 Oct 2020 23:38:08 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -110,7 +110,8 @@ def get_correlation_results(tpl_file, metric_file, correl_fn):
     tpl_rank_array = np.extract(ranks_mask, tpl_array)
     other_rank_array = np.extract(ranks_mask, other_array)
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
-    return correl_score_overall, col_scores_for_act_dims, unique_dims, correl_score_rank
+    return correl_score_overall, col_scores_for_act_dims, unique_dims, \
+        correl_score_rank, other_array
 
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
