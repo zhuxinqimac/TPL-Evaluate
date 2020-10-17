@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 18:56:45 AEDT
+# --- Last Modified: Sat 17 Oct 2020 18:58:09 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -125,6 +125,7 @@ def main():
         os.path.join(args.parent_parent_dir, model_names[0]))
     results_overall_ls = []
     for model_dir in model_dirs:
+        print('model_dir:', model_dir)
         tpl_file = os.path.join(model_dir, TPL_NAME)
         results_overall_ls.append([])
         for metric in metric_file_names:
