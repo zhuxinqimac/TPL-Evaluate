@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:25:08 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:31:03 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -93,11 +93,12 @@ def get_correlation_results(tpl_file, metric_file, correlation_type):
     col_scores_for_act_dims = []
     for act_dim in unique_dims:
         tpl_dim_mask = tpl_act_dims_array == act_dim
+        n_samples = tpl_dim_mask.astype(int).sum()
         tpl_i_array = np.extract(tpl_dim_mask, tpl_array)
         other_i_array = np.extract(tpl_dim_mask, other_array)
         # correl_score_i, _ = scipy.stats.spearmanr(tpl_i_array, other_i_array)
         correl_score_i = correl_fn(tpl_i_array, other_i_array)
-        col_scores_for_act_dims.append(correl_score_i)
+        col_scores_for_act_dims.append([correl_score_i, n_samples])
     return correl_score_overall, col_scores_for_act_dims, unique_dims
 
 
@@ -108,7 +109,8 @@ def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
                 os.path.join(
                     model_dir, correlation_type + '_' + metric + '_' +
                     str(act_dim) + '.txt'), 'w') as f:
-            f.write('{0:.4f}'.format(col_scores_for_act_dims[i]))
+            f.write('score={0:.4f}, n={1}'.format(
+                col_scores_for_act_dims[i][0], col_scores_for_act_dims[i][1]))
 
 
 def main():
