@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 23:38:08 AEDT
+# --- Last Modified: Sat 17 Oct 2020 23:45:39 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -151,6 +151,7 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
     ranks = np.empty_like(temp)
     ranks[temp] = np.arange(len(tpl_all_scores))  # rank entries by metric
     ranks_mask = ranks < (0.2 * len(tpl_all_scores))
+    tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
     scores_all = []
     scores_rank = []
     for metric_scores in metrics_scores:
@@ -159,7 +160,6 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
         scores_all.append(scores_all_i)
 
         # Calculate correlation scores for rank < 20%.
-        tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
         other_rank_array = np.extract(ranks_mask, scores_all_i)
         score_rank_i = correl_fn(tpl_rank_array, other_rank_array)
         scores_rank.append(score_rank_i)
@@ -205,6 +205,7 @@ def main():
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
                                      model_dir, BRIEF[metric],
                                      args.correlation_type)
+            print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores = get_tpl_all_scores(model_dirs)
     scores_all, scores_rank = get_all_scores(tpl_all_scores, metrics_scores,
                                              correl_fn)
