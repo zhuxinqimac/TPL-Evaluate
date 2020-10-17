@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sun 18 Oct 2020 00:24:30 AEDT
+# --- Last Modified: Sun 18 Oct 2020 00:31:17 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -35,6 +35,12 @@ SUPERVISED_ENTRIES = {
     'collected-dci-mean.csv': 'disentanglement.mean',
     'collected-factor_vae_metric-mean.csv': 'eval_accuracy.mean',
     'collected-beta_vae_sklearn-mean.csv': 'eval_accuracy.mean'
+}
+GOOD_THRESH = {
+    'collected-mig-mean.csv': 0.18,
+    'collected-dci-mean.csv': 0.34,
+    'collected-factor_vae_metric-mean.csv': 0.75,
+    'collected-beta_vae_sklearn-mean.csv': 0.87
 }
 BRIEF = {
     'collected-tpl-mean.csv': 'TPL',
@@ -146,7 +152,7 @@ def get_tpl_all_scores(model_dirs):
     return tpl_all
 
 
-def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
+def get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names):
     # temp = tpl_all_scores.argsort()
     # ranks = np.empty_like(temp)
     # ranks[temp] = np.arange(len(tpl_all_scores))  # rank entries by metric
@@ -154,12 +160,12 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn):
     # tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
     scores_all = []
     scores_rank = []
-    for metric_scores in metrics_scores:
+    for i, metric_scores in enumerate(metrics_scores):
         # Calculate all scores.
         scores_all_i = correl_fn(tpl_all_scores, metric_scores)
         scores_all.append(scores_all_i)
 
-        ranks_mask = 0.7 < metric_scores
+        ranks_mask = GOOD_THRESH[metric_file_names[i]] < metric_scores
         tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
         # Calculate correlation scores for rank < 20%.
         other_rank_array = np.extract(ranks_mask, metric_scores)
@@ -210,7 +216,7 @@ def main():
             print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores = get_tpl_all_scores(model_dirs)
     scores_all, scores_rank = get_all_scores(tpl_all_scores, metrics_scores,
-                                             correl_fn)
+                                             correl_fn, metric_file_names)
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
