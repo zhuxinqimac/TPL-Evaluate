@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:14:55 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:16:56 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -103,7 +103,7 @@ def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
                 os.path.join(
                     model_dir, correlation_type + '_' + metric + '_' +
                     str(act_dim) + '.txt'), 'w') as f:
-            f.write(col_scores_for_act_dims[i])
+            f.write('{0:.4f}'.format(col_scores_for_act_dims[i]))
 
 
 def main():
