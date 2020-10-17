@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:13:46 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:14:55 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -77,13 +77,13 @@ def get_correlation_results(tpl_file, metric_file, correlation_type):
     tpl_df = pd.read_csv(tpl_file)
     other_df = pd.read_csv(metric_file)
     print('tpl_df.columns:', tpl_df.columns)
-    tpl_array = tpl_df.loc[:, TPL_MEAN].values()
+    tpl_array = tpl_df.loc[:, TPL_MEAN].values
     other_array = other_df.loc[:, SUPERVISED_ENTRIES[os.path.basename(
-        metric_file)]].values()
+        metric_file)]].values
     correl_fn = CORREL_F[correlation_type]
     correl_score_overall = correl_fn(tpl_array, other_array)
     # correl_score_overall, _ = scipy.stats.spearmanr(tpl_array, other_array)
-    tpl_act_dims_array = tpl_df.loc[:, TPL_ACT].values()
+    tpl_act_dims_array = tpl_df.loc[:, TPL_ACT].values
     unique_dims = np.unique(tpl_act_dims_array)
     col_scores_for_act_dims = []
     for act_dim in unique_dims:
