@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:09:47 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:12:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -76,6 +76,7 @@ def get_metric_file_names(model_dir):
 def get_correlation_results(tpl_file, metric_file, correlation_type):
     tpl_df = pd.read_csv(tpl_file)
     other_df = pd.read_csv(metric_file)
+    print('tpl_df.columns:', tpl_df.columns)
     tpl_array = tpl_df.loc[:, TPL_MEAN].values()
     other_array = other_df.loc[:, SUPERVISED_ENTRIES[os.path.basename(
         metric_file)]].values()
@@ -145,6 +146,7 @@ def main():
         os.path.join(
             args.parent_parent_dir,
             args.correlation_type + '_' + BRIEF[TPL_NAME] + '_vs_others.csv'))
+
 
 if __name__ == "__main__":
     main()
