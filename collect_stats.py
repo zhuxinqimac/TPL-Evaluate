@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:06:52 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:09:47 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -60,7 +60,7 @@ CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
 
 
 def get_model_names(model_dirs):
-    model_names = [name[:-4] for name in os.path.basename(model_dirs)]
+    model_names = [os.path.basename(name)[:-4] for name in model_dirs]
     return model_names
 
 
