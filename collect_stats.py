@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sun 18 Oct 2020 00:37:25 AEDT
+# --- Last Modified: Sun 18 Oct 2020 00:38:34 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -40,7 +40,7 @@ GOOD_THRESH = {
     'collected-mig-mean.csv': 0.15,
     'collected-dci-mean.csv': 0.3,
     'collected-factor_vae_metric-mean.csv': 0.7,
-    'collected-beta_vae_sklearn-mean.csv': 0.82
+    'collected-beta_vae_sklearn-mean.csv': 0.87
 }
 BRIEF = {
     'collected-tpl-mean.csv': 'TPL',
