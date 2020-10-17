@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 23:50:07 AEDT
+# --- Last Modified: Sat 17 Oct 2020 23:51:47 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -221,11 +221,11 @@ def main():
                 args,
                 prefix='rank')
     save_scores(np.array(scores_all),
-                'all_models', [BRIEF[name] for name in metric_file_names],
+                ['all_models'], [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='all')
     save_scores(np.array(scores_rank),
-                'all_models', [BRIEF[name] for name in metric_file_names],
+                ['all_models'], [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='all_rank')
 
