@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 19:12:35 AEDT
+# --- Last Modified: Sat 17 Oct 2020 19:13:46 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -122,8 +122,7 @@ def main():
     args = parser.parse_args()
     model_dirs = glob.glob(os.path.join(args.parent_parent_dir, '*'))
     model_names = get_model_names(model_dirs)
-    metric_file_names = get_metric_file_names(
-        os.path.join(args.parent_parent_dir, model_names[0]))
+    metric_file_names = get_metric_file_names(model_dirs[0])
     results_overall_ls = []
     print('model_dirs:', model_dirs)
     for model_dir in model_dirs:
