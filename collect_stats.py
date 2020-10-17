@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Sat 17 Oct 2020 22:54:24 AEDT
+# --- Last Modified: Sat 17 Oct 2020 22:57:29 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -105,14 +105,10 @@ def get_correlation_results(tpl_file, metric_file, correlation_type):
         col_scores_for_act_dims.append([correl_score_i, n_samples])
 
     # Calculate correlation scores for rank < 20%.
-    # temp = other_array.argsort()[::-1]
-    # ranks = np.empty_like(temp)
-    # ranks[temp] = np.arange(len(other_array))  # rank entries by metric
-    # ranks_mask = ranks < (0.5 * len(other_array))
-    temp = tpl_array.argsort()
+    temp = other_array.argsort()[::-1]
     ranks = np.empty_like(temp)
-    ranks[temp] = np.arange(len(tpl_array))  # rank entries by metric
-    ranks_mask = ranks < (0.5 * len(tpl_array))
+    ranks[temp] = np.arange(len(other_array))  # rank entries by metric
+    ranks_mask = ranks < (0.4 * len(other_array))
     tpl_rank_array = np.extract(ranks_mask, tpl_array)
     other_rank_array = np.extract(ranks_mask, other_array)
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
