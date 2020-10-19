@@ -8,7 +8,7 @@
 
 # --- File Name: sweep_evaluate.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 20 Oct 2020 01:47:05 AEDT
+# --- Last Modified: Tue 20 Oct 2020 01:51:25 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -45,7 +45,7 @@ def main():
             continue
         model_path = os.path.join(path, "model")
         result_path = os.path.join(path, "metrics", "tpl")
-        if not args.overwrite and os.path.isdir(os.path.join(result_path, 'results')):
+        if os.path.isdir(os.path.join(result_path, 'results')):
             continue
         else:
             evaluate.evaluate_with_gin_with_generator(model_path, result_path,
