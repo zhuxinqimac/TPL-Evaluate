@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 13 Oct 2020 23:04:54 AEDT
+# --- Last Modified: Tue 20 Oct 2020 16:09:26 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -135,7 +135,7 @@ def compute_tpl_for(sample, generator_function, batch_size,
         j = 0
         traversal_score = 0
         while j < num_samples_per_dim:
-            b_j = min(batch_size, num_samples_per_dim)
+            b_j = min(batch_size, num_samples_per_dim - j)
             cur_imgs_traversal = imgs_traversal[j:j + b_j, ...]
             j += b_j
             traversal_score += measure_distance(cur_imgs_traversal,
