@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Mon 26 Oct 2020 22:42:15 AEDT
+# --- Last Modified: Mon 26 Oct 2020 23:46:07 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -84,18 +84,31 @@ def get_metric_file_names(model_dir):
             metric_file_names.append(os.path.basename(file))
     return metric_file_names
 
-
-def get_correlation_results(tpl_file, metric_file, correl_fn):
+def read_tpl_array(tpl_file):
     tpl_df = pd.read_csv(tpl_file)
-    other_df = pd.read_csv(metric_file)
     tpl_array = tpl_df.loc[:, TPL_MEAN].values
+    return tpl_array
+
+def read_metric_array(metric_file):
+    other_df = pd.read_csv(metric_file)
     other_array = other_df.loc[:, SUPERVISED_ENTRIES[os.path.basename(
         metric_file)]].values
+    return other_array
+
+def get_permodel_correlation_results(tpl_file, metric_file, correl_fn):
+    tpl_array = read_tpl_array(tpl_file)
+    other_array = read_metric_array(metric_file)
 
     # Calculate overall correlation scores.
-    correl_score_overall = correl_fn(tpl_array, other_array)
+    correl_score_permodel = correl_fn(tpl_array, other_array)
+    return correl_score_permodel
+
+def get_perdim_correlation_results(tpl_file, metric_file, correl_fn):
+    tpl_array = read_tpl_array(tpl_file)
+    other_array = read_metric_array(metric_file)
 
     # Calculate per-act-dim correlation scores.
+    tpl_df = pd.read_csv(tpl_file)
     tpl_act_dims_array = tpl_df.loc[:, TPL_ACT].values
     unique_dims = np.unique(tpl_act_dims_array)
     col_scores_for_act_dims = []
@@ -107,6 +120,25 @@ def get_correlation_results(tpl_file, metric_file, correl_fn):
         # correl_score_i, _ = scipy.stats.spearmanr(tpl_i_array, other_i_array)
         correl_score_i = correl_fn(tpl_i_array, other_i_array)
         col_scores_for_act_dims.append([correl_score_i, n_samples])
+    return col_scores_for_act_dims, unique_dims
+
+def get_neartplthresh_results(tpl_file, metric_file, correl_fn):
+    tpl_array = read_tpl_array(tpl_file)
+    other_array = read_metric_array(metric_file)
+
+    # Calculate correlation scores around threshold of TPL: 1.2 - 1.6
+    act_tpl = []
+    act_metric= []
+    for i, tpl_i in enumerate(tpl_array):
+        if tpl_i > 1.2 and tpl_i < 1.6:
+            act_tpl.append(tpl_i)
+            act_metric.append(other_array[i])
+    correl_score_act = correl_fn(np.array(act_tpl), np.array(act_metric))
+    return correl_score_act
+
+def get_otherranktop_results(tpl_file, metric_file, correl_fn):
+    tpl_array = read_tpl_array(tpl_file)
+    other_array = read_metric_array(metric_file)
 
     # Calculate correlation scores for rank < 20%.
     temp = other_array.argsort()[::-1]
@@ -116,8 +148,7 @@ def get_correlation_results(tpl_file, metric_file, correl_fn):
     tpl_rank_array = np.extract(ranks_mask, tpl_array)
     other_rank_array = np.extract(ranks_mask, other_array)
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
-    return correl_score_overall, col_scores_for_act_dims, unique_dims, \
-        correl_score_rank, other_array
+    return correl_score_rank
 
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
@@ -144,8 +175,9 @@ def get_tpl_all_scores(model_dirs):
     tpl_all = None
     for model_dir in model_dirs:
         tpl_file = os.path.join(model_dir, TPL_NAME)
-        tpl_df = pd.read_csv(tpl_file)
-        tpl_array = tpl_df.loc[:, TPL_MEAN].values
+        # tpl_df = pd.read_csv(tpl_file)
+        # tpl_array = tpl_df.loc[:, TPL_MEAN].values
+        tpl_array = read_tpl_array(tpl_file)
         if tpl_all is None:
             tpl_all = tpl_array
         else:
@@ -154,27 +186,36 @@ def get_tpl_all_scores(model_dirs):
 
 
 def get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names):
-    # temp = tpl_all_scores.argsort()
-    # ranks = np.empty_like(temp)
-    # ranks[temp] = np.arange(len(tpl_all_scores))  # rank entries by metric
-    # ranks_mask = ranks < (0.1 * len(tpl_all_scores))
-    # tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
     scores_all = []
-    scores_rank = []
     for i, metric_scores in enumerate(metrics_scores):
-        # print('Metric:', metric_file_names[i])
-        # Calculate all scores.
-        # pdb.set_trace()
         scores_all_i = correl_fn(tpl_all_scores, metric_scores)
         scores_all.append(scores_all_i)
 
+    return scores_all
+
+def get_all_neartplthresh_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names):
+    scores_all_act = []
+    for i, metric_scores in enumerate(metrics_scores):
+        act_tpl = []
+        act_metric = []
+        for j, tpl_j in tpl_all_scores:
+            # Calculate correlation scores around threshold of TPL: 1.2 - 1.6
+            if tpl_j > 1.2 and tpl_j < 1.6:
+                act_tpl.append(tpl_j)
+                act_metric.append(metric_scores[j])
+        scores_all_act_i = correl_fn(act_tpl, act_metric)
+        scores_all_act.append(scores_all_act_i)
+    return scores_all_act
+
+def get_all_otherranktop_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names):
+    scores_rank = []
+    for i, metric_scores in enumerate(metrics_scores):
         ranks_mask = GOOD_THRESH[metric_file_names[i]] < metric_scores
         tpl_rank_array = np.extract(ranks_mask, tpl_all_scores)
-        # Calculate correlation scores for rank < 20%.
         other_rank_array = np.extract(ranks_mask, metric_scores)
         score_rank_i = correl_fn(tpl_rank_array, other_rank_array)
         scores_rank.append(score_rank_i)
-    return scores_all, scores_rank
+    return scores_rank
 
 
 def main():
@@ -195,48 +236,62 @@ def main():
     model_dirs, model_names = get_model_dirs_and_names(model_dirs)
     metric_file_names = get_metric_file_names(model_dirs[0])
     results_overall_ls = []
-    results_rank_ls = []
+    results_near_tpl_thresh_ls = []
     metrics_scores = [None] * len(metric_file_names)
     correl_fn = CORREL_F[args.correlation_type]
     for model_dir in model_dirs:
         tpl_file = os.path.join(model_dir, TPL_NAME)
         results_overall_ls.append([])
-        results_rank_ls.append([])
+        results_near_tpl_thresh_ls.append([])
         for i, metric in enumerate(metric_file_names):
             metric_file = os.path.join(model_dir, metric)
-            col_score, col_scores_for_act_dims, act_dims, correl_score_rank, metric_scores_i = \
-                get_correlation_results(tpl_file, metric_file, correl_fn)
+
+            col_score = get_permodel_correlation_results(tpl_file, metric_file, correl_fn)
+            near_tpl_thresh_score = get_neartplthresh_results(tpl_file, metric_file, correl_fn)
+            # correl_score_rank = get_otherranktop_results(tpl_file, metric_file, correl_fn)
+
+            results_overall_ls[-1].append(col_score)
+            results_near_tpl_thresh_ls[-1].append(near_tpl_thresh_score)
+
+            # Collect overall array for each metric
+            metric_scores_i = read_metric_array(metric_file)
             if metrics_scores[i] is None:
                 metrics_scores[i] = metric_scores_i
             else:
                 metrics_scores[i] = np.concatenate(
                     (metrics_scores[i], metric_scores_i), axis=0)
-            results_overall_ls[-1].append(col_score)
-            results_rank_ls[-1].append(correl_score_rank)
+
+            # Collect perdim scores
+            col_scores_for_act_dims, act_dims = get_perdim_correlation_results(tpl_file, metric_file, correl_fn)
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
                                      model_dir, BRIEF[metric],
                                      args.correlation_type)
             # print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores = get_tpl_all_scores(model_dirs)
-    scores_all, scores_rank = get_all_scores(tpl_all_scores, metrics_scores,
-                                             correl_fn, metric_file_names)
+    scores_all = get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
+    scores_all_rank = get_all_otherranktop_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
+    scores_all_neartplthresh = get_all_neartplthresh_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='overall')
-    save_scores(results_rank_ls,
+    save_scores(results_near_tpl_thresh_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
                 args,
-                prefix='rank')
+                prefix='neartplthresh')
     save_scores(np.array(scores_all)[np.newaxis, ...],
                 ['all_models'], [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='all')
-    save_scores(np.array(scores_rank)[np.newaxis, ...],
+    save_scores(np.array(scores_all_rank)[np.newaxis, ...],
                 ['all_models'], [BRIEF[name] for name in metric_file_names],
                 args,
                 prefix='all_rank')
+    save_scores(np.array(scores_all_neartplthresh)[np.newaxis, ...],
+                ['all_models'], [BRIEF[name] for name in metric_file_names],
+                args,
+                prefix='all_neartplthresh')
 
 
 if __name__ == "__main__":
