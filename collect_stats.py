@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Mon 26 Oct 2020 23:46:07 AEDT
+# --- Last Modified: Mon 26 Oct 2020 23:47:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -198,7 +198,7 @@ def get_all_neartplthresh_scores(tpl_all_scores, metrics_scores, correl_fn, metr
     for i, metric_scores in enumerate(metrics_scores):
         act_tpl = []
         act_metric = []
-        for j, tpl_j in tpl_all_scores:
+        for j, tpl_j in enumerate(tpl_all_scores):
             # Calculate correlation scores around threshold of TPL: 1.2 - 1.6
             if tpl_j > 1.2 and tpl_j < 1.6:
                 act_tpl.append(tpl_j)
