@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Mon 26 Oct 2020 22:24:35 AEDT
+# --- Last Modified: Mon 26 Oct 2020 22:33:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -161,9 +161,9 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
     scores_all = []
     scores_rank = []
     for i, metric_scores in enumerate(metrics_scores):
-        print('Metric:', metric_file_names[i])
+        # print('Metric:', metric_file_names[i])
         # Calculate all scores.
-        pdb.set_trace()
+        # pdb.set_trace()
         scores_all_i = correl_fn(tpl_all_scores, metric_scores)
         scores_all.append(scores_all_i)
 
@@ -215,7 +215,7 @@ def main():
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
                                      model_dir, BRIEF[metric],
                                      args.correlation_type)
-            print('metrics_scores[i].shape:', metrics_scores[i].shape)
+            # print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores = get_tpl_all_scores(model_dirs)
     scores_all, scores_rank = get_all_scores(tpl_all_scores, metrics_scores,
                                              correl_fn, metric_file_names)
