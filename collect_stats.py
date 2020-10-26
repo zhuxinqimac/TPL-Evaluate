@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Mon 26 Oct 2020 22:15:19 AEDT
+# --- Last Modified: Mon 26 Oct 2020 22:24:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -163,6 +163,7 @@ def get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
     for i, metric_scores in enumerate(metrics_scores):
         print('Metric:', metric_file_names[i])
         # Calculate all scores.
+        pdb.set_trace()
         scores_all_i = correl_fn(tpl_all_scores, metric_scores)
         scores_all.append(scores_all_i)
 
