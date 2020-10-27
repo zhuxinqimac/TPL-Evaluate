@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 22:24:35 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:28:53 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -206,18 +206,18 @@ def plot_file_tpl_v_metric_perdim(tpl_file, metric_file, save_dir, metric_name):
 def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model_idx_dict=None, prefix=''):
     corr_score = spearman_correl(tpl_array, other_array)
     idx_argsort = tpl_array.argsort()
+    tmp_arange = np.arange(len(idx_argsort))
     # sorted_tpl_array = tpl_array[idx_argsort]
     model_wise_prefix = ''
     if model_idx_dict is not None:
         new_model_idx_dict = get_new_idx_per_model(model_idx_dict, idx_argsort)
-        tmp_arange = np.arange(len(idx_argsort))
         for k, v in new_model_idx_dict.items():
             plt.bar(tmp_arange[v], other_array[v])
         model_wise_prefix = 'colored'
     else:
         # sorted_other_array_bytpl = other_array[idx_argsort]
         # plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
-        plt.bar(idx_argsort, other_array)
+        plt.bar(tmp_arange[idx_argsort], other_array)
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     ax = plt.gca()
