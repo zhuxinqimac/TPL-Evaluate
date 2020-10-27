@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 22:44:22 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:49:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -212,12 +212,12 @@ def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model
     if model_idx_dict is not None:
         new_model_idx_dict = get_new_idx_per_model(model_idx_dict, idx_argsort)
         for k, v in new_model_idx_dict.items():
-            plt.plot(tmp_arange[v], other_array[model_idx_dict[k]])
+            plt.plot(tmp_arange[v], other_array[model_idx_dict[k]], 'ro')
         model_wise_prefix = 'colored'
     else:
         # sorted_other_array_bytpl = other_array[idx_argsort]
         # plt.plot(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
-        plt.plot(idx_argsort, other_array)
+        plt.plot(idx_argsort, other_array, 'ro')
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     ax = plt.gca()
