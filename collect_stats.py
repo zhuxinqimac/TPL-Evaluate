@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Mon 26 Oct 2020 23:47:35 AEDT
+# --- Last Modified: Tue 27 Oct 2020 16:08:05 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -23,6 +23,7 @@ import scipy
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from sklearn.linear_model import Ridge, RidgeCV, Lasso, LassoCV
 
@@ -150,6 +151,18 @@ def get_otherranktop_results(tpl_file, metric_file, correl_fn):
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
     return correl_score_rank
 
+def plot_tpl_v_metric(tpl_file, metric_file, model_dir, metric_name):
+    tpl_array = read_tpl_array(tpl_file)
+    other_array = read_metric_array(metric_file)
+
+    temp = tpl_array.argsort()
+    # sorted_tpl_array = tpl_array[temp]
+    sorted_other_array_bytpl = other_array[temp]
+    plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
+    plt.xlabel('TPL score rank')
+    plt.ylabel(metric_name)
+    plt.grid(True)
+    plt.savefig(os.path.join(model_dir, 'tpl_v_'+metric_name+'.pdf'), dpi=200)
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
                              metric, correlation_type):
@@ -245,6 +258,7 @@ def main():
         results_near_tpl_thresh_ls.append([])
         for i, metric in enumerate(metric_file_names):
             metric_file = os.path.join(model_dir, metric)
+            plot_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
 
             col_score = get_permodel_correlation_results(tpl_file, metric_file, correl_fn)
             near_tpl_thresh_score = get_neartplthresh_results(tpl_file, metric_file, correl_fn)
