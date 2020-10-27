@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 23:04:25 AEDT
+# --- Last Modified: Tue 27 Oct 2020 23:05:58 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -214,6 +214,7 @@ def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model
         for k, v in new_model_idx_dict.items():
             # plt.plot(tmp_arange[v], other_array[model_idx_dict[k]], 'ro')
             plt.bar(tmp_arange[v], other_array[model_idx_dict[k]], label=k)
+        plt.legend()
         model_wise_prefix = 'colored'
     else:
         sorted_other_array_bytpl = other_array[idx_argsort]
