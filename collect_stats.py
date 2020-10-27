@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 17:19:07 AEDT
+# --- Last Modified: Tue 27 Oct 2020 17:55:50 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -192,13 +192,16 @@ def plot_file_tpl_v_metric_perdim(tpl_file, metric_file, save_dir, metric_name):
         plot_array_tpl_v_metric(tpl_i_array, other_i_array, save_dir, metric_name, prefix='act'+str(act_dim))
 
 def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, prefix=''):
+    corr_score = spearman_correl(tpl_array, other_array)
     temp = tpl_array.argsort()
     # sorted_tpl_array = tpl_array[temp]
     sorted_other_array_bytpl = other_array[temp]
     plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
+    ax = plt.gca()
     plt.grid(True)
+    plt.text(0.8, 0.8, 'Spearman coef='+str(corr_score), transform = ax.transAxes)
     plt.savefig(os.path.join(save_dir, prefix+'tpl_v_'+metric_name+'.pdf'))
     plt.clf()
 
