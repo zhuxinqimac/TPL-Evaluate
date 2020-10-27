@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 22:17:25 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:21:04 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -351,7 +351,7 @@ def main():
             # Collect overall array for each metric
             metric_scores_i = read_metric_array(metric_file)
             if metrics_scores[i] is None:
-                model_idx_for_metric[i][model_name] = np.arange(metric_name_i)
+                model_idx_for_metric[i][model_name] = np.arange(metric_scores_i)
                 metrics_scores[i] = metric_scores_i
             else:
                 tmp_len = len(metrics_scores[i])
