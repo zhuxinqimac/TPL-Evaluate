@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 23:15:16 AEDT
+# --- Last Modified: Tue 27 Oct 2020 23:31:14 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -186,6 +186,22 @@ def greater_than_4(act_array):
 
 def greater_than_3(act_array):
     return act_array > 3
+
+def extract_model_idx_dict_by_dimcond(model_idx_dict, tpl_act_array, dimcond=greater_than_4):
+    tpl_dim_mask = dimcond(tpl_act_array)
+    tmp_arange = np.arange(len(tpl_act_array))
+    idx_to_extract = np.extract(tpl_dim_mask, tmp_arange)
+    oldidx_to_newidx = {}
+    for newi, oldi in enumerate(idx_to_extract):
+        oldidx_to_newidx[oldi] = newi
+    new_model_idx_dict = {}
+    for k, v in model_idx_dict.items():
+        new_v = []
+        for oldi in v:
+            if oldi in oldidx_to_newidx.keys():
+                new_v.append(oldidx_to_newidx[oldi])
+        new_model_idx_dict[k] = new_v
+    return new_model_idx_dict
 
 def extract_array_by_dimcond(tpl_array, tpl_act_array, other_array, dimcond=greater_than_4):
     tpl_dim_mask = dimcond(tpl_act_array)
@@ -382,11 +398,14 @@ def main():
             plot_array_tpl_v_metric(tpl_i_array, other_i_array, args.parent_parent_dir, metric_name_i, prefix='act'+str(act_dim))
         # Dim-conditioned plot
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_4)
-        # model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_dic, tpl_act_all, dimcond=greater_than_4)
+        model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_for_metric[i], tpl_act_all, dimcond=greater_than_4)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4')
+        plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4', model_idx_dict=model_idx_dict_cond)
+
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_3)
-        # model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_dic, tpl_act_all, dimcond=greater_than_3)
+        model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_for_metric[i], tpl_act_all, dimcond=greater_than_3)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3')
+        plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3', model_idx_dict=model_idx_dict_cond)
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
