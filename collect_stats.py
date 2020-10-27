@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 23:12:32 AEDT
+# --- Last Modified: Tue 27 Oct 2020 23:15:16 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -224,7 +224,7 @@ def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model
     plt.ylabel(metric_name)
     ax = plt.gca()
     plt.grid(True)
-    plt.text(0.3, 0.95, 'Spearman coef=%0.3f' % corr_score, transform = ax.transAxes)
+    plt.text(0.2, 0.9, 'Spearman coef=%0.3f' % corr_score, transform = ax.transAxes)
     plt.savefig(os.path.join(save_dir, prefix+model_wise_prefix+'tpl_v_'+metric_name+'.pdf'))
     plt.clf()
 
@@ -382,8 +382,10 @@ def main():
             plot_array_tpl_v_metric(tpl_i_array, other_i_array, args.parent_parent_dir, metric_name_i, prefix='act'+str(act_dim))
         # Dim-conditioned plot
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_4)
+        # model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_dic, tpl_act_all, dimcond=greater_than_4)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4')
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_3)
+        # model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_dic, tpl_act_all, dimcond=greater_than_3)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3')
 
     save_scores(results_overall_ls,
