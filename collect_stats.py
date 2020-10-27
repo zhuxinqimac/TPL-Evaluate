@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 17:59:34 AEDT
+# --- Last Modified: Tue 27 Oct 2020 18:03:23 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -201,7 +201,7 @@ def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, prefi
     plt.ylabel(metric_name)
     ax = plt.gca()
     plt.grid(True)
-    plt.text(0.6, 0.9, 'Spearman coef='+str(corr_score), transform = ax.transAxes)
+    plt.text(0.6, 0.9, 'Spearman coef=%0.2f' % corr_score, transform = ax.transAxes)
     plt.savefig(os.path.join(save_dir, prefix+'tpl_v_'+metric_name+'.pdf'))
     plt.clf()
 
