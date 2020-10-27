@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 18:21:59 AEDT
+# --- Last Modified: Tue 27 Oct 2020 18:22:42 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -334,11 +334,11 @@ def main():
                 metrics_scores[i] = np.concatenate(
                     (metrics_scores[i], metric_scores_i), axis=0)
 
-            # Collect perdim scores
-            col_scores_for_act_dims, act_dims = get_perdim_correlation_results(tpl_file, metric_file, correl_fn)
-            save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
-                                     model_dir, metric_name_i,
-                                     args.correlation_type)
+            # # Collect perdim scores
+            # col_scores_for_act_dims, act_dims = get_perdim_correlation_results(tpl_file, metric_file, correl_fn)
+            # save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
+                                     # model_dir, metric_name_i,
+                                     # args.correlation_type)
             # print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores, tpl_act_all = get_tpl_all_scores(model_dirs)
     scores_all = get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
