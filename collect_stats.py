@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 16:58:08 AEDT
+# --- Last Modified: Tue 27 Oct 2020 17:19:07 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -169,6 +169,19 @@ def extract_array_by_actdim(tpl_array, tpl_act_array, other_array):
         perdim_other_dict[act_dim] = other_i_array
     return perdim_tpl_dict, perdim_other_dict
 
+def greater_than_4(act_array):
+    return act_array > 4
+
+def greater_than_3(act_array):
+    return act_array > 3
+
+def extract_array_by_dimcond(tpl_array, tpl_act_array, other_array, dimcond=greater_than_4):
+    tpl_dim_mask = dimcond(tpl_act_array)
+    n_samples = tpl_dim_mask.astype(int).sum()
+    tpl_cond_array = np.extract(tpl_dim_mask, tpl_array)
+    other_cond_array = np.extract(tpl_dim_mask, other_array)
+    return tpl_cond_array, other_cond_array
+
 def plot_file_tpl_v_metric_perdim(tpl_file, metric_file, save_dir, metric_name):
     tpl_array, tpl_act_array = read_tpl_array(tpl_file)
     other_array = read_metric_array(metric_file)
@@ -323,6 +336,11 @@ def main():
         for act_dim, tpl_i_array in perdim_tpl_dict.items():
             other_i_array = perdim_other_dict[act_dim]
             plot_array_tpl_v_metric(tpl_i_array, other_i_array, args.parent_parent_dir, metric_name_i, prefix='act'+str(act_dim))
+        # Dim-conditioned plot
+        tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_4)
+        plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4')
+        tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_3)
+        plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3')
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
