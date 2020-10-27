@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 22:21:04 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:24:35 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -349,15 +349,14 @@ def main():
             results_near_tpl_thresh_ls[-1].append(near_tpl_thresh_score)
 
             # Collect overall array for each metric
-            metric_scores_i = read_metric_array(metric_file)
             if metrics_scores[i] is None:
-                model_idx_for_metric[i][model_name] = np.arange(metric_scores_i)
-                metrics_scores[i] = metric_scores_i
+                model_idx_for_metric[i][model_name] = np.arange(len(other_array))
+                metrics_scores[i] = other_array
             else:
                 tmp_len = len(metrics_scores[i])
-                model_idx_for_metric[i][model_name] = np.arange(tmp_len, tmp_len + len(metric_scores_i))
+                model_idx_for_metric[i][model_name] = np.arange(tmp_len, tmp_len + len(other_array))
                 metrics_scores[i] = np.concatenate(
-                    (metrics_scores[i], metric_scores_i), axis=0)
+                    (metrics_scores[i], other_array), axis=0)
 
             # # Collect perdim scores
             # col_scores_for_act_dims, act_dims = get_perdim_correlation_results(tpl_file, metric_file, correl_fn)
