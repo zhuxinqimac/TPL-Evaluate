@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 23:31:14 AEDT
+# --- Last Modified: Tue 27 Oct 2020 23:35:18 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -399,11 +399,13 @@ def main():
         # Dim-conditioned plot
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_4)
         model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_for_metric[i], tpl_act_all, dimcond=greater_than_4)
+        print('model_idx_dict_cond:', model_idx_dict_cond)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4')
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>4', model_idx_dict=model_idx_dict_cond)
 
         tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_all_scores, tpl_act_all, metric_scores, dimcond=greater_than_3)
         model_idx_dict_cond = extract_model_idx_dict_by_dimcond(model_idx_for_metric[i], tpl_act_all, dimcond=greater_than_3)
+        print('model_idx_dict_cond:', model_idx_dict_cond)
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3')
         plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, args.parent_parent_dir, metric_name_i, prefix='act>3', model_idx_dict=model_idx_dict_cond)
 
