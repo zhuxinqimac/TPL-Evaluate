@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 16:08:05 AEDT
+# --- Last Modified: Tue 27 Oct 2020 16:12:22 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -162,7 +162,8 @@ def plot_tpl_v_metric(tpl_file, metric_file, model_dir, metric_name):
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     plt.grid(True)
-    plt.savefig(os.path.join(model_dir, 'tpl_v_'+metric_name+'.pdf'), dpi=200)
+    plt.savefig(os.path.join(model_dir, 'tpl_v_'+metric_name+'.pdf'))
+    plt.clf()
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
                              metric, correlation_type):
