@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 18:04:32 AEDT
+# --- Last Modified: Tue 27 Oct 2020 18:21:59 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -300,14 +300,28 @@ def main():
         tpl_file = os.path.join(model_dir, TPL_NAME)
         results_overall_ls.append([])
         results_near_tpl_thresh_ls.append([])
+        tpl_array, tpl_act_array = read_tpl_array(tpl_file)
         for i, metric in enumerate(metric_file_names):
             metric_file = os.path.join(model_dir, metric)
-            plot_file_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
-            plot_file_tpl_v_metric_perdim(tpl_file, metric_file, model_dir, BRIEF[metric])
+            other_array = read_metric_array(metric_file)
+            metric_name_i = BRIEF[metric]
+            # plot_file_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
+            # plot_file_tpl_v_metric_perdim(tpl_file, metric_file, model_dir, BRIEF[metric])
+            # All plot
+            plot_array_tpl_v_metric(tpl_array, other_array, model_dir, metric_name_i)
+            # Per-dim plot
+            perdim_tpl_dict, perdim_other_dict = extract_array_by_actdim(tpl_array, tpl_act_array, other_array)
+            for act_dim, tpl_i_array in perdim_tpl_dict.items():
+                other_i_array = perdim_other_dict[act_dim]
+                plot_array_tpl_v_metric(tpl_i_array, other_i_array, model_dir, metric_name_i, prefix='act'+str(act_dim))
+            # Dim-conditioned plot
+            tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_array, tpl_act_array, other_array, dimcond=greater_than_4)
+            plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, model_dir, metric_name_i, prefix='act>4')
+            tpl_cond_array, other_cond_array = extract_array_by_dimcond(tpl_array, tpl_act_array, other_array, dimcond=greater_than_3)
+            plot_array_tpl_v_metric(tpl_cond_array, other_cond_array, model_dir, metric_name_i, prefix='act>3')
 
             col_score = get_permodel_correlation_results(tpl_file, metric_file, correl_fn)
             near_tpl_thresh_score = get_neartplthresh_results(tpl_file, metric_file, correl_fn)
-            # correl_score_rank = get_otherranktop_results(tpl_file, metric_file, correl_fn)
 
             results_overall_ls[-1].append(col_score)
             results_near_tpl_thresh_ls[-1].append(near_tpl_thresh_score)
@@ -323,7 +337,7 @@ def main():
             # Collect perdim scores
             col_scores_for_act_dims, act_dims = get_perdim_correlation_results(tpl_file, metric_file, correl_fn)
             save_scores_for_act_dims(col_scores_for_act_dims, act_dims,
-                                     model_dir, BRIEF[metric],
+                                     model_dir, metric_name_i,
                                      args.correlation_type)
             # print('metrics_scores[i].shape:', metrics_scores[i].shape)
     tpl_all_scores, tpl_act_all = get_tpl_all_scores(model_dirs)
