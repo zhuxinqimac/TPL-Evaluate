@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 22:28:53 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:34:54 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -215,9 +215,9 @@ def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model
             plt.bar(tmp_arange[v], other_array[v])
         model_wise_prefix = 'colored'
     else:
-        # sorted_other_array_bytpl = other_array[idx_argsort]
-        # plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
-        plt.bar(tmp_arange[idx_argsort], other_array)
+        sorted_other_array_bytpl = other_array[idx_argsort]
+        plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
+        # plt.bar(tmp_arange[idx_argsort], other_array)
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     ax = plt.gca()
