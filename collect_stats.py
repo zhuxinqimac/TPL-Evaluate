@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 18:22:42 AEDT
+# --- Last Modified: Tue 27 Oct 2020 22:17:25 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -150,6 +150,18 @@ def get_otherranktop_results(tpl_file, metric_file, correl_fn):
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
     return correl_score_rank
 
+def get_new_idx_per_model(model_idx_dict, idx_argsort):
+    '''
+    model_idx_dict: {'factovae': [300, ... 600], ...}
+    '''
+    n_total = len(idx_argsort)
+    ranks = np.empty_like(idx_argsort)
+    ranks[idx_argsort] = np.arange(len(idx_argsort))
+    new_dict = {}
+    for k, v in model_idx_dict.items():
+        new_dict[k] = ranks[np.array(v)]
+    return new_dict
+
 def plot_file_tpl_v_metric(tpl_file, metric_file, save_dir, metric_name):
     tpl_array, tpl_act_array = read_tpl_array(tpl_file)
     other_array = read_metric_array(metric_file)
@@ -191,18 +203,27 @@ def plot_file_tpl_v_metric_perdim(tpl_file, metric_file, save_dir, metric_name):
         other_i_array = perdim_other_dict[act_dim]
         plot_array_tpl_v_metric(tpl_i_array, other_i_array, save_dir, metric_name, prefix='act'+str(act_dim))
 
-def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, prefix=''):
+def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name, model_idx_dict=None, prefix=''):
     corr_score = spearman_correl(tpl_array, other_array)
-    temp = tpl_array.argsort()
-    # sorted_tpl_array = tpl_array[temp]
-    sorted_other_array_bytpl = other_array[temp]
-    plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
+    idx_argsort = tpl_array.argsort()
+    # sorted_tpl_array = tpl_array[idx_argsort]
+    model_wise_prefix = ''
+    if model_idx_dict is not None:
+        new_model_idx_dict = get_new_idx_per_model(model_idx_dict, idx_argsort)
+        tmp_arange = np.arange(len(idx_argsort))
+        for k, v in new_model_idx_dict.items():
+            plt.bar(tmp_arange[v], other_array[v])
+        model_wise_prefix = 'colored'
+    else:
+        # sorted_other_array_bytpl = other_array[idx_argsort]
+        # plt.bar(np.arange(len(sorted_other_array_bytpl)), sorted_other_array_bytpl)
+        plt.bar(idx_argsort, other_array)
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     ax = plt.gca()
     plt.grid(True)
     plt.text(0.6, 0.9, 'Spearman coef=%0.3f' % corr_score, transform = ax.transAxes)
-    plt.savefig(os.path.join(save_dir, prefix+'tpl_v_'+metric_name+'.pdf'))
+    plt.savefig(os.path.join(save_dir, prefix+model_wise_prefix+'tpl_v_'+metric_name+'.pdf'))
     plt.clf()
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
@@ -295,8 +316,10 @@ def main():
     results_overall_ls = []
     results_near_tpl_thresh_ls = []
     metrics_scores = [None] * len(metric_file_names)
+    model_idx_for_metric = [{}] * len(metric_file_names)
     correl_fn = CORREL_F[args.correlation_type]
     for model_dir in model_dirs:
+        model_name = os.path.basename(model_dir)
         tpl_file = os.path.join(model_dir, TPL_NAME)
         results_overall_ls.append([])
         results_near_tpl_thresh_ls.append([])
@@ -305,8 +328,7 @@ def main():
             metric_file = os.path.join(model_dir, metric)
             other_array = read_metric_array(metric_file)
             metric_name_i = BRIEF[metric]
-            # plot_file_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
-            # plot_file_tpl_v_metric_perdim(tpl_file, metric_file, model_dir, BRIEF[metric])
+
             # All plot
             plot_array_tpl_v_metric(tpl_array, other_array, model_dir, metric_name_i)
             # Per-dim plot
@@ -329,8 +351,11 @@ def main():
             # Collect overall array for each metric
             metric_scores_i = read_metric_array(metric_file)
             if metrics_scores[i] is None:
+                model_idx_for_metric[i][model_name] = np.arange(metric_name_i)
                 metrics_scores[i] = metric_scores_i
             else:
+                tmp_len = len(metrics_scores[i])
+                model_idx_for_metric[i][model_name] = np.arange(tmp_len, tmp_len + len(metric_scores_i))
                 metrics_scores[i] = np.concatenate(
                     (metrics_scores[i], metric_scores_i), axis=0)
 
@@ -348,6 +373,7 @@ def main():
         metric_name_i = BRIEF[metric_file_names[i]]
         # All plot
         plot_array_tpl_v_metric(tpl_all_scores, metric_scores, args.parent_parent_dir, metric_name_i)
+        plot_array_tpl_v_metric(tpl_all_scores, metric_scores, args.parent_parent_dir, metric_name_i, model_idx_dict=model_idx_for_metric[i])
         # Per-dim plot
         perdim_tpl_dict, perdim_other_dict = extract_array_by_actdim(tpl_all_scores, tpl_act_all, metric_scores)
         for act_dim, tpl_i_array in perdim_tpl_dict.items():
