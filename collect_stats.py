@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 16:12:22 AEDT
+# --- Last Modified: Tue 27 Oct 2020 16:27:20 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -151,10 +151,12 @@ def get_otherranktop_results(tpl_file, metric_file, correl_fn):
     correl_score_rank = correl_fn(tpl_rank_array, other_rank_array)
     return correl_score_rank
 
-def plot_tpl_v_metric(tpl_file, metric_file, model_dir, metric_name):
+def plot_file_tpl_v_metric(tpl_file, metric_file, save_dir, metric_name):
     tpl_array = read_tpl_array(tpl_file)
     other_array = read_metric_array(metric_file)
+    plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name)
 
+def plot_array_tpl_v_metric(tpl_array, other_array, save_dir, metric_name):
     temp = tpl_array.argsort()
     # sorted_tpl_array = tpl_array[temp]
     sorted_other_array_bytpl = other_array[temp]
@@ -162,7 +164,7 @@ def plot_tpl_v_metric(tpl_file, metric_file, model_dir, metric_name):
     plt.xlabel('TPL score rank')
     plt.ylabel(metric_name)
     plt.grid(True)
-    plt.savefig(os.path.join(model_dir, 'tpl_v_'+metric_name+'.pdf'))
+    plt.savefig(os.path.join(save_dir, 'tpl_v_'+metric_name+'.pdf'))
     plt.clf()
 
 def save_scores_for_act_dims(col_scores_for_act_dims, act_dims, model_dir,
@@ -259,7 +261,7 @@ def main():
         results_near_tpl_thresh_ls.append([])
         for i, metric in enumerate(metric_file_names):
             metric_file = os.path.join(model_dir, metric)
-            plot_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
+            plot_file_tpl_v_metric(tpl_file, metric_file, model_dir, BRIEF[metric])
 
             col_score = get_permodel_correlation_results(tpl_file, metric_file, correl_fn)
             near_tpl_thresh_score = get_neartplthresh_results(tpl_file, metric_file, correl_fn)
@@ -286,6 +288,8 @@ def main():
     scores_all = get_all_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
     scores_all_rank = get_all_otherranktop_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
     scores_all_neartplthresh = get_all_neartplthresh_scores(tpl_all_scores, metrics_scores, correl_fn, metric_file_names)
+    for i, metric_scores in enumerate(metrics_scores):
+        plot_array_tpl_v_metric(tpl_all_scores, metric_scores, args.parent_parent_dir, BRIEF[metric_file_names[i]])
 
     save_scores(results_overall_ls,
                 model_names, [BRIEF[name] for name in metric_file_names],
