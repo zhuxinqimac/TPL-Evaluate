@@ -8,7 +8,7 @@
 
 # --- File Name: tpl_score.py
 # --- Creation Date: 13-10-2020
-# --- Last Modified: Tue 20 Oct 2020 16:09:26 AEDT
+# --- Last Modified: Wed 18 Nov 2020 18:42:10 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """Implementation of the TPL score.
@@ -51,6 +51,7 @@ def compute_tpl_score(ground_truth_data,
                       batch_size=gin.REQUIRED,
                       num_traversals=gin.REQUIRED,
                       num_samples_per_dim=gin.REQUIRED,
+                      traversal_bound=gin.REQUIRED,
                       active_thresh=gin.REQUIRED):
     """Computes the FactorVAE disentanglement metric.
 
@@ -64,6 +65,7 @@ def compute_tpl_score(ground_truth_data,
     batch_size: Number of points to be used to in a GPU.
     num_traversals: Number of traversals to sample.
     num_samples_per_dim: Number of samples per dim.
+    traversal_bound: The bound for traversal.
     active_thresh: Threshold for determining active dims.
 
   Returns:
@@ -96,7 +98,7 @@ def compute_tpl_score(ground_truth_data,
         tpl_dim = compute_tpl_for(
             sample, generator_function, batch_size, num_samples_per_dim,
             latent_size, activation,
-            distance_measure)  # np.array of [latent_size]
+            distance_measure, traversal_bound)  # np.array of [latent_size]
         tpl_dim_ls.append(tpl_dim)
     tpl_dim_np = np.array(tpl_dim_ls)  # np.array of [n_trav, latent_size]
     avg_tpl_dim = np.mean(tpl_dim_np, axis=0)  # np.array of [latent_size]
@@ -121,14 +123,14 @@ def compute_tpl_score(ground_truth_data,
 
 def compute_tpl_for(sample, generator_function, batch_size,
                     num_samples_per_dim, latent_size, activation,
-                    distance_measure):
+                    distance_measure, traversal_bound):
     '''
     Return: np.array of [latent_size]
     '''
     tpl_sample_dim_ls = []
     for i in range(latent_size):
         samples_traversal = np.tile(sample, [num_samples_per_dim, 1])
-        samples_traversal[:, i] = np.linspace(-2., 2., num=num_samples_per_dim)
+        samples_traversal[:, i] = np.linspace(-traversal_bound, traversal_bound, num=num_samples_per_dim)
         raw_imgs_traversal = generator_function(
             samples_traversal)  # size: [b, h, w, c]
         imgs_traversal = activation(raw_imgs_traversal)
