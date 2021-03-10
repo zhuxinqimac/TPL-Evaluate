@@ -8,7 +8,7 @@
 
 # --- File Name: collect_stats.py
 # --- Creation Date: 17-10-2020
-# --- Last Modified: Tue 27 Oct 2020 23:35:18 AEDT
+# --- Last Modified: Wed 10 Mar 2021 22:37:33 AEDT
 # --- Author: Xinqi Zhu
 # .<.<.<.<.<.<.<.<.<.<.<.<.<.<.<.<
 """
@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.linear_model import Ridge, RidgeCV, Lasso, LassoCV
+from sklearn.linear_model import Ridge, RidgeCV
 
 TPL_NAME = 'collected-tpl-mean.csv'
 TPL_MEAN = 'avg_tpl.mean'
@@ -57,14 +57,7 @@ def spearman_correl(a, b):
     return correl_score
 
 
-def lasso_correl(a, b):
-    lasso = Lasso(max_iter=10000, normalize=True)
-    lasso.fit(a[:, np.newaxis], b)
-    # print('lasso.coef_:', lasso.coef_)
-    return lasso.coef_[0]
-
-
-CORREL_F = {'Spearman': spearman_correl, 'Lasso': lasso_correl}
+CORREL_F = {'Spearman': spearman_correl}
 
 
 def get_model_dirs_and_names(old_model_dirs):
@@ -326,7 +319,7 @@ def main():
                         help='Correlation type.',
                         type=str,
                         default='Spearman',
-                        choices=['Spearman', 'Lasso'])
+                        choices=['Spearman'])
     args = parser.parse_args()
     model_dirs = glob.glob(os.path.join(args.parent_parent_dir, '*'))
     model_dirs, model_names = get_model_dirs_and_names(model_dirs)
