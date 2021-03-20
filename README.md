@@ -1,4 +1,4 @@
-# Israfel
+# TPL-Evaluate
 
 This repository contains the code for evaluating the
 Traversal Perceptual Length (TPL)
