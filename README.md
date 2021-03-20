@@ -1,7 +1,9 @@
 # TPL-Evaluate
 
 This repository contains the code for evaluating the
-Traversal Perceptual Length (TPL)
+Traversal Perceptual Length, a model selection method
+introduced in paper 
+[Where and What? Examining Interpretable Disentangled Representations](https://github.com/zhuxinqimac/PS-SC),
 on the pretrained 1,800 checkpoints provided in
 [disentanglemen_lib](https://github.com/google-research/disentanglement_lib)
 on DSprites dataset.
